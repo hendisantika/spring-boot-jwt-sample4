@@ -2,7 +2,10 @@ package id.my.hendisantika.jwtsample4.service;
 
 import id.my.hendisantika.jwtsample4.entity.RefreshToken;
 import id.my.hendisantika.jwtsample4.entity.User;
+import id.my.hendisantika.jwtsample4.enums.TokenType;
 import id.my.hendisantika.jwtsample4.exception.TokenException;
+import id.my.hendisantika.jwtsample4.payload.request.RefreshTokenRequest;
+import id.my.hendisantika.jwtsample4.payload.response.RefreshTokenResponse;
 import id.my.hendisantika.jwtsample4.repository.RefreshTokenRepository;
 import id.my.hendisantika.jwtsample4.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +67,19 @@ public class RefreshTokenService {
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
+    }
+
+    public RefreshTokenResponse generateNewToken(RefreshTokenRequest request) {
+        User user = refreshTokenRepository.findByToken(request.getRefreshToken())
+                .map(this::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .orElseThrow(() -> new TokenException(request.getRefreshToken(), "Refresh token does not exist"));
+
+        String token = jwtService.generateToken(user);
+        return RefreshTokenResponse.builder()
+                .accessToken(token)
+                .refreshToken(request.getRefreshToken())
+                .tokenType(TokenType.BEARER.name())
+                .build();
     }
 }
