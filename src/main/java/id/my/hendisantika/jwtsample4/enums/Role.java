@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static id.my.hendisantika.jwtsample4.enums.Privilege.*;
+
 /**
  * Created by IntelliJ IDEA.
  * Project : spring-boot-jwt-sample4
