@@ -8,11 +8,14 @@ import id.my.hendisantika.jwtsample4.payload.request.RefreshTokenRequest;
 import id.my.hendisantika.jwtsample4.payload.response.RefreshTokenResponse;
 import id.my.hendisantika.jwtsample4.repository.RefreshTokenRepository;
 import id.my.hendisantika.jwtsample4.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import java.time.Instant;
 import java.util.Base64;
@@ -92,5 +95,14 @@ public class RefreshTokenService {
                 .secure(true)
                 .sameSite("Strict")
                 .build();
+    }
+
+    public String getRefreshTokenFromCookies(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, refreshTokenName);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return "";
+        }
     }
 }
