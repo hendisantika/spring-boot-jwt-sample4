@@ -2,7 +2,10 @@ package id.my.hendisantika.jwtsample4.service;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,5 +33,9 @@ public class JwtService {
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails);
     }
 }
