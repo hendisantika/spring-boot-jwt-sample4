@@ -11,6 +11,7 @@ import id.my.hendisantika.jwtsample4.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -80,6 +81,16 @@ public class RefreshTokenService {
                 .accessToken(token)
                 .refreshToken(request.getRefreshToken())
                 .tokenType(TokenType.BEARER.name())
+                .build();
+    }
+
+    public ResponseCookie generateRefreshTokenCookie(String token) {
+        return ResponseCookie.from(refreshTokenName, token)
+                .path("/")
+                .maxAge(refreshExpiration / 1000) // 15 days in seconds
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
                 .build();
     }
 }
