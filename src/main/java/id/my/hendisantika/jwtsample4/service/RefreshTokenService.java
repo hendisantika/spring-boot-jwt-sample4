@@ -109,4 +109,12 @@ public class RefreshTokenService {
     public void deleteByToken(String token) {
         refreshTokenRepository.findByToken(token).ifPresent(refreshTokenRepository::delete);
     }
+
+    public ResponseCookie getCleanRefreshTokenCookie() {
+        return ResponseCookie.from(refreshTokenName, "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+    }
 }
