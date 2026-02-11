@@ -1,5 +1,6 @@
 package id.my.hendisantika.jwtsample4.service;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,4 +27,8 @@ public class JwtService {
     private long refreshExpiration;
     @Value("${application.security.jwt.cookie-name}")
     private String jwtCookieName;
+
+    public String extractUserName(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 }
