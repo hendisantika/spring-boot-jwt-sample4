@@ -2,6 +2,7 @@ package id.my.hendisantika.jwtsample4.service;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +57,15 @@ public class JwtService {
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+
+    public ResponseCookie generateJwtCookie(String jwt) {
+        return ResponseCookie.from(jwtCookieName, jwt)
+                .path("/")
+                .maxAge(24 * 60 * 60) // 24 hours
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .build();
     }
 }
