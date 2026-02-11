@@ -80,4 +80,12 @@ public class JwtService {
             return null;
         }
     }
+
+    public ResponseCookie getCleanJwtCookie() {
+        return ResponseCookie.from(jwtCookieName, "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+    }
 }
