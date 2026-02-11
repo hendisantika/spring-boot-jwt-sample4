@@ -2,6 +2,7 @@ package id.my.hendisantika.jwtsample4.service;
 
 import id.my.hendisantika.jwtsample4.entity.RefreshToken;
 import id.my.hendisantika.jwtsample4.entity.User;
+import id.my.hendisantika.jwtsample4.exception.TokenException;
 import id.my.hendisantika.jwtsample4.repository.RefreshTokenRepository;
 import id.my.hendisantika.jwtsample4.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,17 @@ public class RefreshTokenService {
                 .expiryDate(Instant.now().plusMillis(refreshExpiration))
                 .build();
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public RefreshToken verifyExpiration(RefreshToken token) {
+        if (token == null) {
+            log.error("Token is null");
+            throw new TokenException(null, "Token is null");
+        }
+        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+            refreshTokenRepository.delete(token);
+            throw new TokenException(token.getToken(), "Refresh token was expired. Please make a new authentication request");
+        }
+        return token;
     }
 }
