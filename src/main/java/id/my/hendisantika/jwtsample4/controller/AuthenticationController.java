@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -91,4 +92,14 @@ public class AuthenticationController {
         return ResponseEntity.ok(refreshTokenService.generateNewToken(request));
     }
 
+    @PostMapping("/refresh-token-cookie")
+    public ResponseEntity<Void> refreshTokenCookie(HttpServletRequest request) {
+        String refreshToken = refreshTokenService.getRefreshTokenFromCookies(request);
+        RefreshTokenResponse refreshTokenResponse = refreshTokenService
+                .generateNewToken(new RefreshTokenRequest(refreshToken));
+        ResponseCookie NewJwtCookie = jwtService.generateJwtCookie(refreshTokenResponse.getAccessToken());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, NewJwtCookie.toString())
+                .build();
+    }
 }
