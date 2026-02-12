@@ -2,8 +2,10 @@ package id.my.hendisantika.jwtsample4.controller;
 
 import id.my.hendisantika.jwtsample4.handler.ErrorResponse;
 import id.my.hendisantika.jwtsample4.payload.request.AuthenticationRequest;
+import id.my.hendisantika.jwtsample4.payload.request.RefreshTokenRequest;
 import id.my.hendisantika.jwtsample4.payload.request.RegisterRequest;
 import id.my.hendisantika.jwtsample4.payload.response.AuthenticationResponse;
+import id.my.hendisantika.jwtsample4.payload.response.RefreshTokenResponse;
 import id.my.hendisantika.jwtsample4.service.AuthenticationService;
 import id.my.hendisantika.jwtsample4.service.JwtService;
 import id.my.hendisantika.jwtsample4.service.RefreshTokenService;
@@ -83,4 +85,10 @@ public class AuthenticationController {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(authenticationResponse);
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(refreshTokenService.generateNewToken(request));
+    }
+
 }
