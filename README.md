@@ -17,25 +17,47 @@ token support. This project showcases modern security practices using Spring Sec
 
 ## 🛠️ Tech Stack
 
-- **Java 17**
-- **Spring Boot 4.0.1**
-- **Spring Security 7**
+### Core Framework
+- **Java 25** (Temurin JDK)
+- **Spring Boot 4.0.2**
+- **Spring Security 7.0.3**
 - **Spring Data JPA**
-- **PostgreSQL 18** - Database (via Docker)
+- **Hibernate ORM 7.2.1.Final**
+
+### Database & Infrastructure
+- **PostgreSQL 18** - Production database (via Docker)
 - **Docker & Docker Compose** - Containerization
-- **JWT (jjwt 0.11.5)** - JSON Web Token implementation
-- **Maven** - Build tool
-- **Lombok** - Boilerplate reduction
-- **OpenAPI/SpringDoc** - API documentation
-- **Bean Validation** - Request validation
+- **HikariCP** - High-performance JDBC connection pool
+
+### Security & Authentication
+- **JWT (jjwt 0.13.0)** - JSON Web Token implementation
+  - jjwt-api 0.13.0
+  - jjwt-impl 0.13.0
+  - jjwt-jackson 0.13.0
+
+### API Documentation & Validation
+- **SpringDoc OpenAPI 3.0.1** - API documentation & Swagger UI
+- **Jakarta Bean Validation 3.0** - Request validation
+- **Jakarta Annotations 3.0**
+
+### Development Tools
+- **Maven 3.6+** - Build tool & dependency management
+- **Lombok** - Boilerplate code reduction
+- **Spring Boot DevTools** - Hot reload & development utilities
+- **Spring Boot Docker Compose Support** - Automatic container management
+
+### Testing
+- **Spring Boot Starter Test** - Testing framework
+- **Spring Security Test** - Security testing utilities
+- **JUnit 5** - Unit testing framework
 
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- **JDK 17** or higher
-- **Maven 3.6+**
-- **Docker & Docker Compose** (recommended) or **PostgreSQL 12+**
+- **JDK 25** (Temurin/Eclipse Adoptium recommended) or compatible JDK
+- **Maven 3.6+** or use the included Maven wrapper (`./mvnw`)
+- **Docker & Docker Compose** (recommended) or **PostgreSQL 18+**
 - **Git** (for cloning the repository)
 
 ## 🚀 Getting Started
