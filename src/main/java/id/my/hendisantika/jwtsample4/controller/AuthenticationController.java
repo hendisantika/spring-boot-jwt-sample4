@@ -107,4 +107,19 @@ public class AuthenticationController {
         return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String refreshToken = refreshTokenService.getRefreshTokenFromCookies(request);
+        if (refreshToken != null) {
+            refreshTokenService.deleteByToken(refreshToken);
+        }
+        ResponseCookie jwtCookie = jwtService.getCleanJwtCookie();
+        ResponseCookie refreshTokenCookie = refreshTokenService.getCleanRefreshTokenCookie();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .build();
+
+    }
 }
