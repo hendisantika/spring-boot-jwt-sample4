@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,4 +46,9 @@ public class AuthorizationController {
         return ResponseEntity.ok("Hello, you have access to a protected resource that requires admin role and read authority.");
     }
 
+    @DeleteMapping("/admin/resource")
+    @PreAuthorize("hasAuthority('DELETE_PRIVILEGE') and hasRole('ADMIN')")
+    public ResponseEntity<String> sayHelloWithRoleAdminAndDeleteAuthority() {
+        return ResponseEntity.ok("Hello, you have access to a protected resource that requires admin role and delete authority.");
+    }
 }
