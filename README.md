@@ -154,11 +154,20 @@ The application will start on **http://localhost:8086**
 
 ## 📚 API Documentation
 
+### Swagger UI - Interactive API Documentation
+
 Once the application is running, access the Swagger UI for interactive API documentation:
 
-```
-http://localhost:8086/swagger-ui.html
-```
+**🔗 Swagger UI:** http://localhost:8086/swagger-ui.html
+
+**🔗 OpenAPI JSON:** http://localhost:8086/v3/api-docs
+
+### Features:
+- 📖 Complete API documentation with request/response schemas
+- 🧪 Interactive "Try it out" feature to test endpoints
+- 🔐 Built-in authentication support (Bearer token)
+- 📋 Request/response examples for all endpoints
+- 🏷️ Organized by tags: Authentication & Authorization
 
 ## 🔌 API Endpoints
 
@@ -186,6 +195,7 @@ http://localhost:8086/swagger-ui.html
 
 ### Register a New User
 
+**Register a USER:**
 ```bash
 curl -X POST http://localhost:8086/api/v1/auth/register \
   -H "Content-Type: application/json" \
@@ -193,7 +203,21 @@ curl -X POST http://localhost:8086/api/v1/auth/register \
     "firstname": "John",
     "lastname": "Doe",
     "email": "john.doe@example.com",
-    "password": "SecurePass123!"
+    "password": "SecurePass123!",
+    "role": "USER"
+  }'
+```
+
+**Register an ADMIN:**
+```bash
+curl -X POST http://localhost:8086/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstname": "Admin",
+    "lastname": "User",
+    "email": "admin@example.com",
+    "password": "AdminPass123!",
+    "role": "ADMIN"
   }'
 ```
 
@@ -336,11 +360,130 @@ application:
 
 ## 🧪 Testing
 
+### Unit Tests
+
 Run the test suite:
 
 ```bash
 mvn test
 ```
+
+### API Testing
+
+#### Option 1: Using Swagger UI (Recommended)
+
+1. **Start the application** and navigate to: http://localhost:8086/swagger-ui.html
+
+2. **Register a user** using the `/api/v1/auth/register` endpoint
+   - Click "Try it out"
+   - Fill in the request body with `role`: `"USER"` or `"ADMIN"`
+   - Click "Execute"
+
+3. **Copy the `access_token`** from the response
+
+4. **Authorize** by clicking the 🔓 button at the top right
+   - Enter: `Bearer <your_access_token>`
+   - Click "Authorize"
+
+5. **Test all endpoints** interactively with live documentation!
+
+#### Option 2: Using cURL
+
+**Step 1: Register a USER**
+```bash
+curl -X POST http://localhost:8086/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john.doe@example.com",
+    "password": "SecurePass123!",
+    "role": "USER"
+  }'
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "email": "john.doe@example.com",
+  "roles": ["WRITE_PRIVILEGE", "READ_PRIVILEGE", "ROLE_USER"],
+  "access_token": "eyJhbGciOiJIUzM4NCJ9...",
+  "refresh_token": "ZWQwY2VkODItMjg4Ny00ZGI3LThkNDAtYWRhMDBmZWEzNDg3",
+  "token_type": "BEARER"
+}
+```
+
+**Step 2: Test Protected USER Endpoint**
+```bash
+# Save the token
+TOKEN="your_access_token_here"
+
+# Test USER endpoint (requires WRITE_PRIVILEGE)
+curl -X POST http://localhost:8086/api/v1/user/resource \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Expected Response:**
+```
+Hello, you have access to a protected resource that requires user role and write authority.
+```
+
+**Step 3: Register an ADMIN**
+```bash
+curl -X POST http://localhost:8086/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstname": "Admin",
+    "lastname": "User",
+    "email": "admin@example.com",
+    "password": "AdminPass123!",
+    "role": "ADMIN"
+  }'
+```
+
+**Step 4: Test Protected ADMIN Endpoint**
+```bash
+# Save the admin token
+ADMIN_TOKEN="admin_access_token_here"
+
+# Test ADMIN endpoint (requires ADMIN + READ_PRIVILEGE)
+curl -X GET http://localhost:8086/api/v1/admin/resource \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+```
+
+**Expected Response:**
+```
+Hello, you have access to a protected resource that requires admin role and read authority.
+```
+
+### Test Results Summary
+
+| Endpoint | USER Role | ADMIN Role | Expected Behavior |
+|----------|-----------|------------|-------------------|
+| `POST /api/v1/user/resource` | ✅ Success | ✅ Success | Requires WRITE_PRIVILEGE |
+| `PUT /api/v1/user/resource` | ❌ 403 Forbidden | ✅ Success | Requires UPDATE_PRIVILEGE |
+| `GET /api/v1/admin/resource` | ❌ 403 Forbidden | ✅ Success | Requires ADMIN + READ_PRIVILEGE |
+| `DELETE /api/v1/admin/resource` | ❌ 403 Forbidden | ✅ Success | Requires ADMIN + DELETE_PRIVILEGE |
+
+### Role & Privilege Matrix
+
+| Role | Privileges |
+|------|------------|
+| **USER** | `READ_PRIVILEGE`, `WRITE_PRIVILEGE` |
+| **ADMIN** | `READ_PRIVILEGE`, `WRITE_PRIVILEGE`, `UPDATE_PRIVILEGE`, `DELETE_PRIVILEGE` |
+
+### Security Test Checklist
+
+- ✅ Unauthenticated requests return 401 Unauthorized
+- ✅ USER role cannot access ADMIN endpoints
+- ✅ USER role can access USER endpoints with correct privileges
+- ✅ USER role blocked from endpoints without required privilege
+- ✅ ADMIN role has full access to all endpoints
+- ✅ JWT tokens are properly validated
+- ✅ Refresh tokens generate new access tokens
+- ✅ Role-Based Access Control (RBAC) working correctly
+- ✅ Privilege-Based Authorization working correctly
 
 ## 📝 License
 
